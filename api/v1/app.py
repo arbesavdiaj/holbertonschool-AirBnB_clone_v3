@@ -4,12 +4,12 @@ Module to instatiate an flask app
 to deploy our API
 '''
 from flask import Flask
-import os
+from os import getenv
 from models import storage
 from api.v1.views import app_views
 
 
-app = Flask(__name__)  # Creating an instance of Flask
+app = Flask(__name__)
 
 
 @app.teardown_appcontext
@@ -21,6 +21,9 @@ def teardown_appcontext(exception):
 
 
 if __name__ == "__main__":
-    host = os.getenv('HBNB_API_HOST', '0.0.0.0')
-    port = int(os.getenv('HBNB_API_PORT', 5000))
-    app.run(host=host, port=port, threaded=True)
+    '''
+    Starting server
+    '''
+    app.run(host=getenv("HBNB_API_HOST", default="0.0.0.0"),
+            port=int(getenv("HBNB_API_PORT", default=5000)),
+            threaded=True)
