@@ -4,19 +4,29 @@ Module to instatiate an flask app
 to deploy our API
 '''
 from flask import Flask
-from os import getenv
 from models import storage
+from os import getenv
+from flask import jsonify
 from api.v1.views import app_views
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app, origins=['0.0.0.0'])
+app.register_blueprint(app_views)
+
+
+@app.errorhandler(404)
+def error_404(error):
+    return jsonify({"error": "Not found"}), 404
 
 
 @app.teardown_appcontext
-def teardown_appcontext(exception):
-    """
-    Method to handle app teardown.
-    """
+def close_db(error):
+    '''
+    Function call to close db connection
+    after each app teardwon
+    '''
     storage.close()
 
 
