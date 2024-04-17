@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+'''
+Module to instatiate an flask app
+to deploy our API
+'''
 from flask import Flask
 from models import storage
 from api.v1.views import app_views

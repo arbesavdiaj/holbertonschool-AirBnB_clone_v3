@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+"""
+Moudle to create Blueprint for our API
+"""
+
 from flask import Blueprint
 from api.v1.views import index
 
