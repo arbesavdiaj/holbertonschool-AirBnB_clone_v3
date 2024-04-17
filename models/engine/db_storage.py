@@ -85,3 +85,12 @@ class DBStorage:
         if obj is None:
             return None
         return obj
+
+    def count(self, cls=None):
+        '''class (optional)'''
+        if cls is None:
+            return sum(len(self.all(c)) for c in classes.values())
+        elif cls in classes.values():
+            return len(self.all(cls))
+        else:
+            return None
