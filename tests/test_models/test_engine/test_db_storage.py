@@ -54,7 +54,7 @@ class TestDBStorage(unittest.TestCase):
         self.assertIsNotNone(DBStorage.delete.__doc__)
         self.assertIsNotNone(DBStorage.reload.__doc__)
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_attributes(self):
         self.assertTrue(isinstance(self.storage._DBStorage__engine, Engine))
@@ -68,13 +68,13 @@ class TestDBStorage(unittest.TestCase):
         self.assertTrue(hasattr(DBStorage, "delete"))
         self.assertTrue(hasattr(DBStorage, "reload"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_init(self):
         """Test initialization."""
         self.assertTrue(isinstance(self.storage, DBStorage))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_all(self):
         """Test default all method."""
@@ -82,7 +82,7 @@ class TestDBStorage(unittest.TestCase):
         self.assertEqual(type(obj), dict)
         self.assertEqual(len(obj), len(self.storage.all()))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_new(self):
         st = State(name="Washington")
@@ -91,7 +91,7 @@ class TestDBStorage(unittest.TestCase):
             State).filter(State.id == st.id).first()
         self.assertEqual(st, x)
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_get(self):
         state = State(name='Albania')
