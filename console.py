@@ -46,10 +46,10 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     try:
                         value = int(value)
-                    except:
+                    except ValueError:
                         try:
                             value = float(value)
-                        except:
+                        except ValueError:
                             continue
                 new_dict[key] = value
         return new_dict
@@ -133,32 +133,35 @@ class HBNBCommand(cmd.Cmd):
         elif args[0] in classes:
             if len(args) > 1:
                 k = args[0] + "." + args[1]
-                if k in models.storage.all():
-                    if len(args) > 2:
-                        if len(args) > 3:
-                            if args[0] == "Place":
-                                if args[2] in integers:
-                                    try:
-                                        args[3] = int(args[3])
-                                    except:
-                                        args[3] = 0
-                                elif args[2] in floats:
-                                    try:
-                                        args[3] = float(args[3])
-                                    except:
-                                        args[3] = 0.0
-                            setattr(models.storage.all()[k], args[2], args[3])
-                            models.storage.all()[k].save()
-                        else:
-                            print("** value missing **")
-                    else:
-                        print("** attribute name missing **")
-                else:
+                try:
+                    instance = models.storage.all()[k]
+                except KeyError:
                     print("** no instance found **")
+                    return
+                if len(args) > 2:
+                    if len(args) > 3:
+                        if args[0] == "Place":
+                            if args[2] in integers:
+                                try:
+                                    args[3] = int(args[3])
+                                except ValueError:
+                                    args[3] = 0
+                            elif args[2] in floats:
+                                try:
+                                    args[3] = float(args[3])
+                                except ValueError:
+                                    args[3] = 0.0
+                        setattr(instance, args[2], args[3])
+                        instance.save()
+                    else:
+                        print("** value missing **")
+                else:
+                    print("** attribute name missing **")
             else:
                 print("** instance id missing **")
         else:
             print("** class doesn't exist **")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
