@@ -14,7 +14,7 @@ from models.state import State
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def setUp(self):
         """ Set up test environment """
@@ -25,22 +25,22 @@ class test_fileStorage(unittest.TestCase):
         for key in del_list:
             del self.storage.all()[key]
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def tearDown(self):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except FileNotFoundError:
             pass
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_obj_list_empty(self):
         """ __objects is initially empty """
         self.assertEqual(len(storage.all()), 0)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_new(self):
         """ New object is correctly added to __objects """
@@ -48,7 +48,7 @@ class test_fileStorage(unittest.TestCase):
         new.save()
         self.assertEqual(new in storage.all().values(), True)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_all(self):
         """ __objects is properly returned """
@@ -56,14 +56,14 @@ class test_fileStorage(unittest.TestCase):
         temp = self.storage.all()
         self.assertIsInstance(temp, dict)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_base_model_instantiation(self):
         """ File is not created on BaseModel save """
         new = BaseModel()
         self.assertFalse(os.path.exists('file.json'))
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_empty(self):
         """ Data is saved to file """
@@ -74,7 +74,7 @@ class test_fileStorage(unittest.TestCase):
         new2 = BaseModel(**thing)
         self.assertNotEqual(os.path.getsize('file.json'), 0)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_save(self):
         """ FileStorage save method """
@@ -82,7 +82,7 @@ class test_fileStorage(unittest.TestCase):
         self.storage.save()
         self.assertTrue(os.path.exists('file.json'))
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
@@ -93,13 +93,13 @@ class test_fileStorage(unittest.TestCase):
             loaded = obj
             self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_reload_from_nonexistent(self):
         """ Nothing happens if file does not exist """
         self.assertEqual(storage.reload(), None)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_base_model_save(self):
         """ BaseModel save method calls storage save """
@@ -112,13 +112,13 @@ class test_fileStorage(unittest.TestCase):
         " Confirm __file_path is string "
         self.assertEqual(type(storage._FileStorage__file_path), str)"""
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_type_objects(self):
         """ Confirm __objects is a dict """
         self.assertEqual(type(self.storage.all()), dict)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_key_format(self):
         """ Key is properly formatted """
@@ -128,7 +128,7 @@ class test_fileStorage(unittest.TestCase):
             temp = key
             self.assertEqual(temp, 'BaseModel' + '.' + _id)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_storage_var_created(self):
         """ FileStorage object storage created """
@@ -136,7 +136,7 @@ class test_fileStorage(unittest.TestCase):
         print(type(self.storage))
         self.assertEqual(type(self.storage), FileStorage)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_documentation(self):
         """ Test docstrings documentation"""
@@ -144,7 +144,7 @@ class test_fileStorage(unittest.TestCase):
         self.assertTrue(file_storage.__doc__)
         self.assertTrue(file_storage.FileStorage.__doc__)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
+    @unittest.skipIf(type(models.storage) is DBStorage,
                      "Testing DBStorage")
     def test_methods_doc(self):
         """ Test all docstrings of each method"""
@@ -152,19 +152,22 @@ class test_fileStorage(unittest.TestCase):
         for all_methods in dir(FileStorage):
             self.assertTrue(all_methods.__doc__)
 
-    @unittest.skipIf(models.storage_t == DBStorage, "Testing DBStorage")
+    @unittest.skipIf(models.storage == DBStorage, "Testing DBStorage")
     def test_get(self):
         state = State(name='Albania')
         state.save()
         x = self.storage.get(State, state.id)
         self.assertEqual(x, state)
 
-    @unittest.skipIf(models.storage_t == DBStorage, "Testing DBStorage")
+    @unittest.skipIf(models.storage == DBStorage, "Testing DBStorage")
     def test_count(self):
         state = State(name='another')
         state.save()
-        self.assertEqual(len(self.storage.all()), storage.count())
-        self.assertEqual(len(self.storage.all(State)), storage.count(State))
+        self.assertEqual(len(self.storage.all()), self.storage.count())
+        self.assertEqual(
+                len(self.storage.all(State)),
+                self.storage.count(State)
+                )
 
 
 if __name__ == '__main__':
