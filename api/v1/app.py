@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+<<<<<<< HEAD
 """ Flask Application """
 from models import storage
 from api.v1.views import app_views
@@ -12,10 +13,33 @@ app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.register_blueprint(app_views)
 cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
+=======
+'''
+Module to instatiate an flask app
+to deploy our API
+'''
+from flask import Flask
+from models import storage
+from os import getenv
+from flask import jsonify
+from api.v1.views import app_views
+from flask_cors import CORS
+
+
+app = Flask(__name__)
+CORS(app, origins=['0.0.0.0'])
+app.register_blueprint(app_views)
+
+
+@app.errorhandler(404)
+def error_404(error):
+    return jsonify({"error": "Not found"}), 404
+>>>>>>> fa325c1a2eb0da37cf10643f5a3f032c7547be2a
 
 
 @app.teardown_appcontext
 def close_db(error):
+<<<<<<< HEAD
     """ Close Storage """
     storage.close()
 
@@ -47,3 +71,19 @@ if __name__ == "__main__":
     if not port:
         port = '5000'
     app.run(host=host, port=port, threaded=True)
+=======
+    '''
+    Function call to close db connection
+    after each app teardwon
+    '''
+    storage.close()
+
+
+if __name__ == "__main__":
+    '''
+    Starting server
+    '''
+    app.run(host=getenv("HBNB_API_HOST", default="0.0.0.0"),
+            port=int(getenv("HBNB_API_PORT", default=5000)),
+            threaded=True)
+>>>>>>> fa325c1a2eb0da37cf10643f5a3f032c7547be2a
